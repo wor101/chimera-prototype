@@ -1,0 +1,29 @@
+Parameters:
+  MeshOwnerId:
+    Description: Owner ID of Mesh
+    Type: String
+    Default: '822180497458'
+Resources:
+  DragonMesh:
+    Type: 'AWS::AppMesh::Mesh'
+    Properties:
+      MeshName: dragon
+      Spec:
+        EgressFilter:
+          Type: DROP_ALL
+  DragonVirtualGateway:
+    Type: 'AWS::AppMesh::VirtualGateway'
+    Properties:
+      MeshName: dragon
+      VirtualGatewayName: dragon-gateway
+      Spec:
+        BackendDefaults:
+          ClientPolicy: {}
+        Listeners:
+          - PortMapping:
+              Port: 80
+              Protocol: http
+        Logging: {}
+      MeshOwner:
+        Ref: MeshOwnerId
+    DependsOn: DragonMesh
