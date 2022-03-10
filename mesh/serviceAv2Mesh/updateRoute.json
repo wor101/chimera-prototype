@@ -1,0 +1,20 @@
+{
+  "meshName": "apps",
+  "routeName": "servicea",
+  "spec": {
+      "httpRoute": {
+          "action": {
+              "weightedTargets": [
+                  {
+                      "virtualNode": "serviceAv2",
+                      "weight": 100
+                  }
+              ]
+          },
+          "match": {
+              "prefix": "/"
+          }
+      }
+  },
+  "virtualRouterName": "servicea"
+}

@@ -1,0 +1,109 @@
+Resources:
+  SeviceAv2VirtualNode:
+    Type: 'AWS::AppMesh::VirtualNode'
+    Properties:
+      MeshName: apps
+      VirtualNodeName: serviceAv2
+      Spec:
+        BackendDefaults:
+          ClientPolicy: {}
+        Backends: []
+        Listeners:
+          - PortMapping:
+              Port: 8080
+              Protocol: http
+        Logging: {}
+        ServiceDiscovery:
+          AWSCloudMap:
+            NamespaceName: apps.local
+            ServiceName: serviceAv2
+      MeshOwner: '822180497458'
+  ServiceAv2ServiceDiscoveryEntry:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Name: serviceAv2
+      DnsConfig:
+        DnsRecords:
+          - Type: A
+            TTL: "300"
+        NamespaceId: ns-duw5hzhk5cfw45c5
+      HealthCheckCustomConfig:
+        FailureThreshold: '1'
+  ServiceAv2Service:
+    Type: AWS::ECS::Service
+    Properties:
+      LaunchType: FARGATE
+      Cluster: app
+      DesiredCount: 1
+      ServiceRegistries:
+        - RegistryArn:
+            'Fn::GetAtt': ServiceAv2ServiceDiscoveryEntry.Arn
+      TaskDefinition: !Ref 'ServiceAv2TaskDefinition'
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets: [ 'subnet-7273ec0a']
+          SecurityGroups: ['sg-cff186c7']
+  ServiceAv2TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: APP-serviceAv2
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn: DEMO-ecs-cluster-TaskIamRole-5932OTKY837Z
+      ExecutionRoleArn: DEMO-ecs-cluster-TaskExecutionIamRole-LT6CS9UJ5IOX
+      Cpu: 256
+      Memory: 512
+      ProxyConfiguration:
+        Type: APPMESH
+        ContainerName: envoy
+        ProxyConfigurationProperties:
+          - Name: IgnoredUID
+            Value: '1337'
+          - Name: ProxyIngressPort
+            Value: '15000'
+          - Name: ProxyEgressPort
+            Value: '15001'
+          - Name: AppPorts
+            Value: '8080'
+          - Name: EgressIgnoredIPs
+            Value: '169.254.170.2,169.254.169.254'
+      ContainerDefinitions:
+        - Name: app
+          Essential: true
+          Image: 822180497458.dkr.ecr.us-west-2.amazonaws.com/serviceav2:latest
+          PortMappings:
+            - ContainerPort: 8080
+          Environment:
+            - Name: PORT
+              Value: '9080'
+            - Name: SERVICEA
+              Value: 'v2'
+          DependsOn:
+            - ContainerName: envoy
+              Condition: HEALTHY
+        - Name: envoy
+          Essential: true
+          Image: public.ecr.aws/appmesh/aws-appmesh-envoy:v1.21.1.0-prod
+          User: '1337'
+          Ulimits:
+            - Name: nofile
+              HardLimit: 15000
+              SoftLimit: 15000
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -s http://localhost:9901/server_info | grep state | grep -q LIVE
+            Interval: 5
+            Timeout: 10
+            Retries: 10
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: task-definition
+              awslogs-region: us-west-2
+              awslogs-stream-prefix: serviceAv2-xray
+          Environment:
+            - Name: APPMESH_VIRTUAL_NODE_NAME
+              Value: mesh/apps/virtualNode/serviceA
