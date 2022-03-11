@@ -32,6 +32,7 @@
 8. Gradually shift weights to new node target in the Route until at 100% NOT IMPLEMENTED
 9. Delete virtual node for old version of service
 
-
-10. Delete old version of ECS service
-11. Delete old version of service name registry from Cloud Map
+10. MUST SCALE DOWN running Service tasks to 0 before you can delete the servcie.
+11. Delete old version of ECS service 
+12. Delete task definition of old version
+13. Delete old version of service name registry from Cloud Map
