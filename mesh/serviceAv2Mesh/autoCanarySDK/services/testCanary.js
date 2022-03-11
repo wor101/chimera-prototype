@@ -3,7 +3,7 @@ const axios = require('axios')
 const createRequests = (numberOfRequests, url) => {
   const request = () => {
     const promise = new Promise((resolve, reject) => {
-      axios
+        axios
         .get(url)
         .then(res => {
           resolve(res)
@@ -13,7 +13,7 @@ const createRequests = (numberOfRequests, url) => {
     return promise
   }
 
-  return [...Array(numberOfRequests).keys()].map(elem => request())
+  return [...Array(numberOfRequests).keys()].map(elem => request(elem))
 }
 
 const evaluateSettledResponses = (settledResponses, tests) => {

@@ -14,9 +14,9 @@ const clusterName = 'app'
 const meshName = 'apps'
 const routeName = 'servicea'
 const originalNodeName = 'serviceAv2'
-const originalNodeWeight = 50
+const originalNodeWeight = 0
 const canaryNodeName = 'serviceAv3'
-const canaryNodeWeight = 50
+const canaryNodeWeight = 100
 const routePathPrefix = '/'
 const routerName = 'servicea'
 const securityGroups = ['sg-cff186c7']
@@ -45,7 +45,6 @@ const tests = {
 // must create TaskDefinition before service
 // registerTaskDefinition(clientConfiguration, taskName, containerName, imageURL, containerPortNumber, executionIAMRole, taskIAMRole)
 // createService(clientConfiguration, clusterName, securityGroups, subnets, newServiceName, taskName, containerName, containerPortNumber, registryArn)
-
-//updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName )
-
-testCanary(numberOfTests, testURL, tests)
+// updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName )
+// testCanary(numberOfTests, testURL, tests)
+// deleteVirtualNode = async (clientConfig, meshName, originalNodeName)

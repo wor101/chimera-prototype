@@ -26,11 +26,12 @@
   - can do via AWS consol or....
   - via CLI with a JSON file (see updateRoute.json)
     aws appmesh update-route --cli-input-json file://updateRoute.json
-
-
 7. Test canary deployement 
     for x in {1..50}; do curl http://35.86.102.245:8000/gettime/ab; echo ''; done
-8. Gradually shift weights to new node target in the Route until at 100%
+
+8. Gradually shift weights to new node target in the Route until at 100% NOT IMPLEMENTED
 9. Delete virtual node for old version of service
+
+
 10. Delete old version of ECS service
 11. Delete old version of service name registry from Cloud Map
