@@ -20,11 +20,9 @@
 1. upload new version image to ECR
 2. Create virtual node for new version
 3. Create Service Discovery Entry for ECS Service of new version (we have yet to actually create)
+4. Create task definition for service (task definitions are a required field when creating a new service)
+5. Create new Service
 
-
-
-4. Create new Service
-5. Create task definition for service
 6. Update service Route of corresponding Virtual Router with new virtual node targets and weights
   - can do via AWS consol or....
   - via CLI with a JSON file (see updateRoute.json)

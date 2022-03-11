@@ -1,10 +1,10 @@
 const { AppMeshClient, CreateVirtualNodeCommand } = require("@aws-sdk/client-app-mesh")
 
-const createVirtualNode = async (clientConfiguration, virtualNodeName) => {
+const createVirtualNode = async (clientConfiguration, meshName, virtualNodeName) => {
   const appMeshClient = new AppMeshClient(clientConfiguration)
 
   const virtualNodeInput = {
-    meshName: 'apps',
+    meshName: meshName,
     spec: {
       // backendDefaults: {},
       // backends: [],
