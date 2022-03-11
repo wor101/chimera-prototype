@@ -1,6 +1,6 @@
 const { ECSClient, CreateServiceCommand } = require("@aws-sdk/client-ecs")
 
-const createService = async (clientConfig, clusterName, securityGroups, subnets, newServiceName) => {
+const createService = async (clientConfig, clusterName, securityGroups, subnets, newServiceName, taskName) => {
   const client = new ECSClient(clientConfig)
 
   const createServiceInput = {
@@ -15,7 +15,7 @@ const createService = async (clientConfig, clusterName, securityGroups, subnets,
       }
     },
     serviceName: newServiceName,
-    // taskDefinition: family:revison or full ARN
+    taskDefinition: taskName
   }
 
   const command = new CreateServiceCommand(createServiceInput)

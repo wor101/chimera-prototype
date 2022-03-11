@@ -25,7 +25,7 @@ const taskIAMRole = 'arn:aws:iam::822180497458:role/DEMO-ecs-cluster-TaskIamRole
 
 //must create ECR register before TaskDefintion
 //must create TaskDefinition before service
-registerTaskDefinition(clientConfiguration, taskName, containerName, imageURL, containerPortNumber, executionIAMRole, taskIAMRole)
+//registerTaskDefinition(clientConfiguration, taskName, containerName, imageURL, containerPortNumber, executionIAMRole, taskIAMRole)
 
-//createService(clientConfiguration, clusterName, securityGroups, subnets, newServiceName)
+createService(clientConfiguration, clusterName, securityGroups, subnets, newServiceName, taskName)
 
