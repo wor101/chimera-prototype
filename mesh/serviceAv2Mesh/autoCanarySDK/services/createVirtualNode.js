@@ -1,6 +1,6 @@
 const { AppMeshClient, CreateVirtualNodeCommand } = require("@aws-sdk/client-app-mesh")
 
-const createVirtualNode = async (clientConfiguration, meshName, virtualNodeName) => {
+const createVirtualNode = async (clientConfiguration, meshName, virtualNodeName, serviceDiscoveryName) => {
   const appMeshClient = new AppMeshClient(clientConfiguration)
 
   const virtualNodeInput = {
@@ -19,12 +19,12 @@ const createVirtualNode = async (clientConfiguration, meshName, virtualNodeName)
       serviceDiscovery: 
         { dns: 
           {
-            hostname: `${virtualNodeName}.apps.local`,
+            hostname: `${serviceDiscoveryName}.apps.local`,
             name: virtualNodeName
           }
       },
     },
-    virtualNodeName: 'serviceAv3'
+    virtualNodeName: virtualNodeName
   }
   
   const createVirtualNode = new CreateVirtualNodeCommand(virtualNodeInput)

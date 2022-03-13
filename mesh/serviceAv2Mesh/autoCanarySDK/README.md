@@ -37,7 +37,13 @@
       - must wait for task instance to spin down
       - maybe get task ID and then use stopTask.js to ensure it has stopped before attempting to delete service?
 11. Delete old version of ECS service 
-
+  - deleting ECS 'servicea' broke communication between 'getTime/ab' and servicea.apps.local, why?????
+    - traffic through the virtual gateway direct to servicea still functions and returns data for serviceAv3
+    - 'getTime/ab'says "getaddrinfo ENOTFOUND servicea.apps.local"
+    - why is north/south traffic through the virtual gateway unaffected but traffic from another microservice affected?
+    - is the east/west traffic circumventing the virtual service and virtual router to go direct to the other microservice? 
+    - REGARDING ABOVE QUESTIONS:
+      - must make sure service discovery name remains the same (i.e. serviceAv3 should still be given service discovery name of servicea so it can be found at servicea.apps.local)
 
 12. Delete task definition of old version
 13. Delete old version of service name registry from Cloud Map

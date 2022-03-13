@@ -21,11 +21,9 @@ const stopTask = async (clientConfig, cluster, reason, task) => {
   } 
 }
 
-const cluster = 'app'
-const reason = 'Stopping Task for service deletion'
-const task = '91690a292c1e443eb603d3980d1231fe'
-
-
-stopTask({ region: 'us-west-2' }, cluster, reason, task)
+// const cluster = 'app'
+// const reason = 'Stopping Task for service deletion'
+// const task = '91690a292c1e443eb603d3980d1231fe'
+// stopTask({ region: 'us-west-2' }, cluster, reason, task)
 
 module.exports = stopTask

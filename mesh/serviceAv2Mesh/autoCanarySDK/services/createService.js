@@ -1,9 +1,7 @@
 const { ECSClient, CreateServiceCommand } = require("@aws-sdk/client-ecs")
-const getServiceFromCloudMap = require('./getService')
 
-const createService = async (clientConfig, clusterName, securityGroups, subnets, newServiceName, taskName, containerName, containerPortNumber, registryArn) => {
+const createService = async (clientConfig, clusterName, securityGroups, subnets, newServiceName, taskName, containerName, registryArn) => {
   const client = new ECSClient(clientConfig)
-  const serviceArn = await getService()
 
   const createServiceInput = {
     cluster: clusterName,
@@ -20,7 +18,7 @@ const createService = async (clientConfig, clusterName, securityGroups, subnets,
     serviceRegistries: [
       {
         containerName: containerName,
-        registryArn: 'arn:aws:servicediscovery:us-west-2:822180497458:service/srv-ux3kh4hj32ybmyfb' // 'arn:aws:servicediscovery:us-west-2:822180497458:namespace/ns-duw5hzhk5cfw45c5',
+        registryArn: registryArn // was only able to discover by using getService.js, find via the service ID of the cloud map service name to use
       }
     ],
     taskDefinition: taskName

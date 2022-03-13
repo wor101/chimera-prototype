@@ -21,10 +21,4 @@ const updateService = async (clientConfig, cluster, desiredCount, service) => {
   }
 }
 
-const cluster = 'app'
-const desiredCount = 0
-const service = 'servicea'
-
-updateService({region: 'us-west-2'}, cluster, desiredCount, service)
-
 module.exports = updateService

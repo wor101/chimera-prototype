@@ -21,9 +21,4 @@ const deleteService = async (clientConfig, clusterARN, serviceName) => {
   }  
 }
 
-const clusterARN = 'arn:aws:ecs:us-west-2:822180497458:cluster/app'
-const serviceName = 'servicea'
-
-deleteService({region: 'us-west-2'}, clusterARN, serviceName)
-
 module.exports = deleteService
