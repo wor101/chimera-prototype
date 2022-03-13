@@ -19,7 +19,7 @@ const clusterARN = 'arn:aws:ecs:us-west-2:822180497458:cluster/app'
 const meshName = 'apps'
 const routeName = 'servicea'
 const originalNodeName = 'serviceAv3'
-const originalServiceName = 'serviceAv2'
+const originalServiceName = 'serviceav3'
 const originalNodeWeight = 0
 const canaryNodeName = 'serviceAv4'
 const canaryNodeWeight = 100
@@ -46,7 +46,8 @@ const tests = {
 const desiredCount = 0
 
 
-// createServiceName(clientConfiguration, newServiceName, newServiceNamespaceID) // DONT DO!! USE EXISTING SERVICENAME
+// DO NOT USE!! createServiceName(clientConfiguration, newServiceName, newServiceNamespaceID) // DONT DO!! USE EXISTING SERVICENAME
+
 // createVirtualNode(clientConfiguration, meshName, newServiceName, serviceDiscoveryName)
 
 // must create ECR register before TaskDefintion
@@ -57,8 +58,11 @@ const desiredCount = 0
 // testCanary(numberOfTests, testURL, tests)
 
 // NEED TO REMOVE old node from route in order to delete
+const removeOldNode = true
+//updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName, removeOldNode )
 
+// deleteVirtualNode(clientConfiguration, meshName, originalNodeName)
 
-//deleteVirtualNode(clientConfiguration, meshName, originalNodeName)
-// updateService(clientConfiguration, clusterName, desiredCount, originalServiceName)
-// deleteService(clientConfiguration, clusterARN, originalServiceName)
+// Have to update service to set number of tasks running to 0 before the ECS service can be deleted
+// updateService(clientConfiguration, clusterName, desiredCount, originalServiceName) // may require check to confirm tasks have stopped before proceeding to deletion
+//deleteService(clientConfiguration, clusterARN, originalServiceName)
