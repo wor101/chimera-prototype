@@ -31,8 +31,13 @@
 
 8. Gradually shift weights to new node target in the Route until at 100% NOT IMPLEMENTED
 9. Delete virtual node for old version of service
-
 10. MUST SCALE DOWN running Service tasks to 0 before you can delete the servcie.
+    - stopTask.js will stop the task but it auto-restarts
+    - updateService.js can be used to set 'desiredCount' to 0
+      - must wait for task instance to spin down
+      - maybe get task ID and then use stopTask.js to ensure it has stopped before attempting to delete service?
 11. Delete old version of ECS service 
+
+
 12. Delete task definition of old version
 13. Delete old version of service name registry from Cloud Map

@@ -11,9 +11,11 @@ const clientConfiguration = { region: "us-west-2" }
 const newServiceName = 'serviceav3'
 const newServiceNamespaceID = 'ns-duw5hzhk5cfw45c5'
 const clusterName = 'app'
+const clusterARN = 'arn:aws:ecs:us-west-2:822180497458:cluster/app'
 const meshName = 'apps'
 const routeName = 'servicea'
 const originalNodeName = 'serviceAv2'
+const originalServiceName = 'serviceAv2'
 const originalNodeWeight = 0
 const canaryNodeName = 'serviceAv3'
 const canaryNodeWeight = 100
@@ -37,6 +39,8 @@ const tests = {
   matchStatus: 200,
 }
 
+const desiredCount = 0
+
 
 // createServiceName(clientConfiguration, newServiceName, newServiceNamespaceID)
 // createVirtualNode(clientConfiguration, meshName, newServiceName)
@@ -48,3 +52,5 @@ const tests = {
 // updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName )
 // testCanary(numberOfTests, testURL, tests)
 // deleteVirtualNode = async (clientConfig, meshName, originalNodeName)
+// updateService(clientConfiguration, clusterName, desiredCount, originalServiceName)
+// deleteService(clientConfiguration, clusterARN, originalServiceName)
