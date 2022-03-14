@@ -1,5 +1,18 @@
 # Implementing Canary with SDK
 
+# Demo running on 
+- Virtual Gateway
+  - public IP: http://35.86.102.245:8000/
+  - defaults to serviceb
+- The getTime app 
+  - sends a request to servicea and serviceb and returns a concatenated string
+  - http://35.86.102.245:8000/gettime/ab
+- servicea: 
+  - path /servicea
+- serviceb:
+  - path /serviceb
+  - public IP: http://35.86.140.102:8080/
+
 ## Required Packages ##
 - @aws-sdk/client-servicediscovery
 - @aws-sdk/client-ecs
@@ -7,43 +20,102 @@
 - @aws-sdk/client-app-mesh
 
 # Parameters Needed
-- user info
-- user aws region
-- user ECR image
-- AWS Envoy image
-- user provided service name
-- user provided task definition name
-- user provided app mesh name
 
+# Pre-autoCanarySDK steps
+1. create docker image of the canary app
+2. upload docker image to AWS ECR
 
-# steps to automate
-1. upload new version image to ECR
-2. Create virtual node for new version
-3. Create Service Discovery Entry for ECS Service of new version (we have yet to actually create)
-4. Create task definition for service (task definitions are a required field when creating a new service)
-5. Create new Service
-6. Update service Route of corresponding Virtual Router with new virtual node targets and weights
-  - can do via AWS consol or....
-  - via CLI with a JSON file (see updateRoute.json)
-    aws appmesh update-route --cli-input-json file://updateRoute.json
-7. Test canary deployement 
-    for x in {1..50}; do curl http://35.86.102.245:8000/gettime/ab; echo ''; done
+# Steps for using autoCanarySDK
+1. Create a new Virtual Node for the canary
+  - Parameters Required:
+    - client configuration
+    - name of AWS App Mesh
+    - name of new Service (name of Canary)
+    - existing Service Discovery Name of the app to be replaced
+  - Use function 'createVirtualNode'
+  - SDK: @aws-sdk/client-app-mesh
 
-8. Gradually shift weights to new node target in the Route until at 100% NOT IMPLEMENTED
-9. Delete virtual node for old version of service
-10. MUST SCALE DOWN running Service tasks to 0 before you can delete the servcie.
-    - stopTask.js will stop the task but it auto-restarts
-    - updateService.js can be used to set 'desiredCount' to 0
-      - must wait for task instance to spin down
-      - maybe get task ID and then use stopTask.js to ensure it has stopped before attempting to delete service?
-11. Delete old version of ECS service 
-  - deleting ECS 'servicea' broke communication between 'getTime/ab' and servicea.apps.local, why?????
-    - traffic through the virtual gateway direct to servicea still functions and returns data for serviceAv3
-    - 'getTime/ab'says "getaddrinfo ENOTFOUND servicea.apps.local"
-    - why is north/south traffic through the virtual gateway unaffected but traffic from another microservice affected?
-    - is the east/west traffic circumventing the virtual service and virtual router to go direct to the other microservice? 
-    - REGARDING ABOVE QUESTIONS:
-      - must make sure service discovery name remains the same (i.e. serviceAv3 should still be given service discovery name of servicea so it can be found at servicea.apps.local)
+2. Register Task Definition for the canary
+  - Parameters Required:
+    - client configuration (previously used)
+    - name of new Task Definition
+    - name of new Container for the canary within the Task Definition
+    - URI/URL of the docker images stored on ECR
+    - port # the canary will listen to in the container
+    - a execution IAM Role
+    - a task IAM Role
+  - Use function 'registerTaskDefinition'
+  - Notes:
+    - The function will setup 2 conatiners:
+      - A container for the canary image found via the URI/URL to ECR
+      - A container for the Envoy proxy (URL currently hardcoded into function)
 
-12. Delete task definition of old version
-13. Delete old version of service name registry from Cloud Map
+3. Create a new Service in ECS
+  - Parameters Required:
+    - client configuration (previously used)
+    - name of new Service (previously used)
+    - name of new Task Definition (previously used)
+    - name of new Container for the canary within the Task Definition (previously used)
+    - name of existing cluster on ECS to create the service in
+    - a security group with proper traffic permissions (must allow HTTP traffic)
+    - the subnets you wish the service to run on
+    - the registry ARN for the original apps service name in service discovery/cloud map (requires service discovery ID)
+  - Use function 'createService'
+  - Notes:
+    - function currently sets VPC to the users default VPC
+    - the registry ARN requires the service discovery ID for the original service 
+      - can then get full ARN using the ID with 'getService.js' or...
+      - create ARN using basic ARN template with user info and service ID
+
+4. Update Route to Shift Traffic to Canary
+  - Parameters Required:
+    - client configuration (previously used)
+    - name of the existing App Mesh 
+    - routeName (reuse existing service discovery name?)
+    - name of original Virtual Node that will need to be replaced
+    - weight to apply to the original Virtual Node
+    - name of the canary Virtual Node (previously used - same as newServiceName in Step 1)
+    - weight to apply to the canary Virtual Node
+    - route path prefix (typically '/')
+    - name of the router (reuse existing service discovery name?)
+  - Use function 'updateRoute'
+
+5. Test the health of the Canary
+  - Only implemented as an example 
+
+6. Update the Route to remove the reference to the Virtual of Node of the old version of the App
+  - Parameters Required:
+    - removeOldNode (boolean) set to true
+    - see Step 4
+  - Use function 'updateRoute'
+  - Notes:
+    - the Virtual Node cannot be deleted until it is no longer referenced in the route/app mesh
+    - 'updateRoute' takes an optional parameter that when set to true only sets one weighted target
+
+7. Delete Virtual Node of the original app
+  - Parameters Required:
+    - client configuration (previously used)
+    - name of the existing App Mesh (previously used)
+    - name of original Virtual Node (previously used)
+  - use function 'deleteVirtualNode'
+
+8. Update ECS Serviceto set number of Tasks running to 0
+  - Parameters Required:
+    - Desired number of tasks to be running (0)
+    - client configuration (previously used)
+    - name of  cluster on ECS (previously used)
+    - name of the original service on ECS
+  - Use function 'updateService'
+
+9. Delete the original Service on ECS
+  - Parameters Required:
+    - client configuration (previously used)
+    - name of the original service on ECS (previously used)
+    - ARN of the cluster the Service is being deleted from
+      
+10. Deregister the Task Definition in ECS
+  - Parameters Required:
+    - client configuration (previously used)
+    - The name of the original Task Definition along with its version tag (i.e.' APP-serviceAv3:1' )
+  - Use function 'deregisterTaskDefinition'
+
