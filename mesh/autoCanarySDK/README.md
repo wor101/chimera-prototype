@@ -20,6 +20,31 @@
 - @aws-sdk/client-app-mesh
 
 # Parameters Needed
+    - client configuration
+    - name of AWS App Mesh
+    - name of new Service (name of Canary)
+    - name of new Task Definition
+    - name of new Container for the canary within the Task Definition
+    - URI/URL of the docker images stored on ECR
+    - port # the canary will listen to in the container
+    - a execution IAM Role
+    - a task IAM Role
+    - name of existing cluster on ECS to create the service in
+    - a security group with proper traffic permissions (must allow HTTP traffic)
+    - the subnets you wish the service to run on
+    - the registry ARN for the original apps service name in service discovery/cloud map (requires service discovery ID)
+    - name of the existing App Mesh 
+    - routeName (reuse existing service discovery name?)
+    - name of original Virtual Node that will need to be replaced
+    - weight to apply to the original Virtual Node
+    - weight to apply to the canary Virtual Node
+    - route path prefix (typically '/')
+    - name of the router (reuse existing service discovery name?)
+    - removeOldNode (boolean)
+    - Desired number of tasks to be running (0)
+    - name of the original service on ECS
+    - ARN of the cluster the Service is being deleted from
+    - The name of the original Task Definition along with its version tag (i.e.' APP-serviceAv3:1' )
 
 # Pre-autoCanarySDK steps
 1. create docker image of the canary app
@@ -101,9 +126,9 @@
 
 8. Update ECS Serviceto set number of Tasks running to 0
   - Parameters Required:
-    - Desired number of tasks to be running (0)
     - client configuration (previously used)
     - name of  cluster on ECS (previously used)
+    - Desired number of tasks to be running (0)
     - name of the original service on ECS
   - Use function 'updateService'
 
