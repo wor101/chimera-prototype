@@ -66,3 +66,6 @@ const removeOldNode = true
 // Have to update service to set number of tasks running to 0 before the ECS service can be deleted
 // updateService(clientConfiguration, clusterName, desiredCount, originalServiceName) // may require check to confirm tasks have stopped before proceeding to deletion
 //deleteService(clientConfiguration, clusterARN, originalServiceName)
+
+const taskDefinitionWithRevision = 'APP-serviceAv3:1'
+// deregisterTaskDefinition({ region: 'us-west-2'}, taskDefinitionWithRevision)
