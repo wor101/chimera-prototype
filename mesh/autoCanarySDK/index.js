@@ -51,15 +51,16 @@ const tests = {
 
 // Step 1: Create a New Virtual Node
 const clientConfiguration = { region: "us-west-2" }
-const newServiceName = 'serviceAv4'
+const meshName = 'apps'
+const newServiceName = 'serviceAv5'
 const serviceDiscoveryName = 'servicea'
 // createVirtualNode(clientConfiguration, meshName, newServiceName, serviceDiscoveryName)
 
 
 // Step 2: Register Task Definition
-const taskName = 'APPS-serviceAv4'
-const containerName = 'serviceAv4'
-const imageURL = '822180497458.dkr.ecr.us-west-2.amazonaws.com/serviceav4:latest'
+const taskName = 'APPS-serviceAv5'
+const containerName = 'serviceAv5'
+const imageURL = '822180497458.dkr.ecr.us-west-2.amazonaws.com/serviceav5:latest'
 const containerPortNumber = 8080
 const executionIAMRole = 'arn:aws:iam::822180497458:role/DEMO-ecs-cluster-TaskExecutionIamRole-LT6CS9UJ5IOX' 
 const taskIAMRole = 'arn:aws:iam::822180497458:role/DEMO-ecs-cluster-TaskIamRole-5932OTKY837Z'
@@ -73,11 +74,10 @@ const registryArn = 'arn:aws:servicediscovery:us-west-2:822180497458:service/srv
 // createService(clientConfiguration, clusterName, securityGroups, subnets, newServiceName, taskName, containerName, registryArn)
 
 // Step 4: Update Route to Shift Traffic to Canary
-const meshName = 'apps'
 const routeName = 'servicea'
-const originalNodeName = 'serviceAv3'
+const originalNodeName = 'serviceAv4'
 const originalNodeWeight = 0
-const canaryNodeName = 'serviceAv4'
+const canaryNodeName = 'serviceAv5'
 const canaryNodeWeight = 100
 const routePathPrefix = '/'
 const routerName = 'servicea'
@@ -89,7 +89,7 @@ const routerName = 'servicea'
 
 // Step 6: Update the Route to remove the reference to the Virtual of Node of the old version of the App
 const removeOldNode = true
-//updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName, removeOldNode )
+// updateRoute(clientConfiguration, meshName, routeName, originalNodeName, originalNodeWeight, canaryNodeName, canaryNodeWeight, routePathPrefix, routerName, removeOldNode )
 
 // Step 7: Delete Virtual Node of the original app
 // deleteVirtualNode(clientConfiguration, meshName, originalNodeName)
@@ -97,13 +97,13 @@ const removeOldNode = true
 // Step 8: Update Service to set number of tasks running to 0
 // Have to update service to set number of tasks running to 0 before the ECS service can be deleted
 const desiredCount = 0
-const originalServiceName = 'serviceav3' 
+const originalServiceName = 'serviceAv4' 
 // updateService(clientConfiguration, clusterName, desiredCount, originalServiceName) // may require check to confirm tasks have stopped before proceeding to deletion
 
 // Step 9: Delete the original Service on ECS
 const clusterARN = 'arn:aws:ecs:us-west-2:822180497458:cluster/app'
-//deleteService(clientConfiguration, clusterARN, originalServiceName)
+// deleteService(clientConfiguration, clusterARN, originalServiceName)
 
 // Step 10: Deregister the original Task Definition in ECS
-const taskDefinitionWithRevision = 'APP-serviceAv3:1'
+const taskDefinitionWithRevision = 'APPS-serviceAv4:1'
 // deregisterTaskDefinition({ region: 'us-west-2'}, taskDefinitionWithRevision)

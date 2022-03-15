@@ -20,4 +20,4 @@ const getService = async (serviceId, clientConfig) => {
 }
 
 module.exports = getService
-getService('srv-mesgbyykdafdewbm', {region: 'us-west-2'})
+getService('srv-qg5c2ybyanoo25am', {region: 'us-west-2'})
