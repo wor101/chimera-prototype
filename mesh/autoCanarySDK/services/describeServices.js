@@ -32,6 +32,17 @@ describeServices( { region: 'us-west-2' }, cluster, services)
     //console.log(response.services[0].deploymentConfiguration)
     //console.log(service.networkConfiguration)
     service.serviceRegistries.forEach(reg => console.log(reg))
+    service.deployments.forEach(dep => console.log(dep))
+    service.events.forEach(event => console.log(event)) 
+
+    // events has an array of objects. If the service is successfully started, the last object should be the below. It's message key has a string value which contains the task ID
+    /*
+      {
+        createdAt: 2022-03-14T16:16:56.402Z,
+        id: 'f473ca29-0a13-4327-860b-af8cf79b3e95',
+        message: '(service serviceAv5) has started 1 tasks: (task 671b6b5d8b354f8fb801822baec81ea9).'
+      }
+    */
   })
 
 
