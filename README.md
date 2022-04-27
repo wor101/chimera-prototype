@@ -1,4 +1,4 @@
-#Original Prototype for Chimera
+# Chimera Prototype / Spike
 [Chimera](https://chimera-deploy.dev) is a an open-source tool for performing automated canary deployments of containerized microservices. It allows software development teams to safely and easily deploy new versions of their microservices by taking advantage of the features provided by their existing service mesh.
 
 ## Built With
